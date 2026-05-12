@@ -40,7 +40,7 @@
     </div>
 
     <button type="submit" class="btn btn-novo">Salvar</button>
-    <a href="{{ route('receitas.index') }}" class="btn btn-voltar ms-2">Voltar à Lista</a>
+    <a href="{{ route('receitas.index') }}" class="btn btn-voltar ms-2">Ir para Lista</a>
     <a href="{{ url('/') }}" class="btn btn-voltar ms-2">Voltar à Página Inicial</a>
 </form>
 

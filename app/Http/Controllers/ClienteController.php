@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Cliente;
-use App\Models\Pedido;
 
 class ClienteController extends Controller
 {
-  
     public function index(Request $request)
     {
         $query = Cliente::query();
@@ -26,29 +24,33 @@ class ClienteController extends Controller
         return view('cliente.list', compact('dados'));
     }
 
-    
     public function create()
     {
         return view('cliente.form');
     }
 
-
     public function store(Request $request)
     {
         $request->validate([
-            'nome' => 'required',
-            'email' => 'required|email|unique:clientes,email',
+            'nome'     => 'required',
+            'email'    => 'required|email|unique:clientes,email',
             'telefone' => 'required',
-            'cpf' => 'required|unique:clientes,cpf',
+            'cpf'      => 'required|unique:clientes,cpf',
             'endereco' => 'nullable',
+            'imagem'   => 'nullable|image|max:2048',
         ]);
 
-        Cliente::create($request->all());
+        $dados = $request->except('imagem');
+
+        if ($request->hasFile('imagem')) {
+            $dados['imagem'] = $request->file('imagem')->store('clientes', 'public');
+        }
+
+        Cliente::create($dados);
 
         return redirect()->route('clientes.index')
                          ->with('sucesso', 'Cliente criado com sucesso!');
     }
-
 
     public function edit($id)
     {
@@ -56,24 +58,30 @@ class ClienteController extends Controller
         return view('cliente.form', compact('dado'));
     }
 
-
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nome' => 'required',
-            'email' => 'required|email|unique:clientes,email,' . $id,
+            'nome'     => 'required',
+            'email'    => 'required|email|unique:clientes,email,' . $id,
             'telefone' => 'required',
-            'cpf' => 'required|unique:clientes,cpf,' . $id,
+            'cpf'      => 'required|unique:clientes,cpf,' . $id,
             'endereco' => 'nullable',
+            'imagem'   => 'nullable|image|max:2048',
         ]);
 
-        Cliente::findOrFail($id)->update($request->all());
+        $cliente = Cliente::findOrFail($id);
+        $dados   = $request->except('imagem');
+
+        if ($request->hasFile('imagem')) {
+            $dados['imagem'] = $request->file('imagem')->store('clientes', 'public');
+        }
+
+        $cliente->update($dados);
 
         return redirect()->route('clientes.index')
                          ->with('sucesso', 'Cliente atualizado com sucesso!');
     }
 
-  
     public function destroy($id)
     {
         $cliente = Cliente::findOrFail($id);
@@ -89,7 +97,6 @@ class ClienteController extends Controller
                          ->with('sucesso', 'Cliente excluído com sucesso!');
     }
 
-    // Pesquisa AJAX para Select2
     public function buscar(Request $request)
     {
         $termo = $request->input('q');
