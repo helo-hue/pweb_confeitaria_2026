@@ -42,7 +42,11 @@
     </style>
 </head>
 <body>
+<<<<<<< HEAD
     <h1> Maison Cerise — Relatório de Pedidos</h1>
+=======
+    <h1>Maison Cerise — Relatório de Pedidos</h1>
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
 
     <table>
         <thead>

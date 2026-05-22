@@ -34,7 +34,10 @@ body {
     flex-direction: column;
     font-family: 'Quicksand', sans-serif;
     color: var(--cor-texto);
+<<<<<<< HEAD
     padding-top: 56px; /* altura do navbar */
+=======
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
 }
 
 body::before {
@@ -59,6 +62,7 @@ body::after {
     z-index: 0;
 }
 
+<<<<<<< HEAD
 /* ===== NAVBAR ===== */
 .navbar-cerise {
     position: fixed;
@@ -281,6 +285,119 @@ footer::after {
     font-size: 0.82rem;
 }
 
+=======
+header {
+    background: var(--cor-primaria);
+    padding: 25px 0;
+    text-align: center;
+    color: var(--cor-fundo);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    border-bottom: 5px solid var(--cor-terciaria);
+    position: relative;
+}
+
+header::before {
+    content: '★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★';
+    display: block;
+    font-size: 0.7rem;
+    color: var(--cor-secundaria);
+    letter-spacing: 8px;
+    margin-bottom: 8px;
+}
+
+header img {
+    max-width: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    border: 4px solid var(--cor-secundaria);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    letter-spacing: 3px;
+    color: white;
+}
+
+footer {
+    margin-top: auto;
+    background-color: var(--cor-primaria);
+    color: var(--cor-secundaria);
+    text-align: center;
+    padding: 15px 0;
+    font-weight: bold;
+    letter-spacing: 1px;
+    border-top: 5px solid var(--cor-terciaria);
+}
+
+footer::before {
+    content: '★ ';
+    color: var(--cor-terciaria);
+}
+
+footer::after {
+    content: ' ★';
+    color: var(--cor-terciaria);
+}
+
+.content-container {
+    padding: 30px 15px;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== BOTÕES ===== */
+.btn-novo {
+    background: var(--cor-primaria);
+    color: white;
+    border: 2px solid var(--cor-primaria);
+    border-radius: 20px;
+    padding: 8px 20px;
+    font-weight: 700;
+    font-family: 'Quicksand', sans-serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.82rem;
+    transition: all 0.2s;
+}
+
+.btn-novo:hover {
+    background: white;
+    color: var(--cor-primaria);
+    border-color: var(--cor-primaria);
+}
+
+.btn-voltar {
+    background: var(--cor-secundaria);
+    color: var(--cor-primaria);
+    border: 2px solid var(--cor-primaria);
+    border-radius: 20px;
+    padding: 8px 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.82rem;
+}
+
+.btn-voltar:hover {
+    background: var(--cor-primaria);
+    color: white;
+}
+
+.btn-pesquisar {
+    background: var(--cor-terciaria);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.82rem;
+}
+
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
 .btn-pesquisar:hover {
     background: var(--cor-primaria);
     color: white;
@@ -465,7 +582,11 @@ h2::after, h3::after {
     color: var(--cor-primaria);
 }
 
+<<<<<<< HEAD
 /* ===== CARDS PRODUTOS ===== */
+=======
+/* ===== CARDS produtos ===== */
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
 #produtosGrid {
     row-gap: 20px;
 }
@@ -580,10 +701,82 @@ h2::after, h3::after {
 .produto-card-novo .produto-info h6 {
     color: var(--cor-primaria);
 }
+<<<<<<< HEAD
+=======
+.calendario-grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:6px;
+}
+
+.calendario-header{
+    background:var(--cor-primaria);
+    color:white;
+    text-align:center;
+    padding:10px;
+    border-radius:8px;
+    font-weight:700;
+}
+
+.calendario-dia{
+    background:white;
+    border:2px solid var(--cor-secundaria);
+    border-radius:10px;
+    min-height:90px;
+    padding:8px;
+    transition:0.2s;
+}
+
+.calendario-dia.vazio{
+    background:transparent;
+    border:none;
+}
+
+.calendario-dia.hoje{
+    border-color:var(--cor-primaria);
+    box-shadow:0 0 0 2px var(--cor-primaria);
+}
+
+.calendario-dia.tem-entrega{
+    background:#fff0f0;
+    border-color:var(--cor-terciaria);
+}
+
+.calendario-dia.tem-entrega:hover{
+    transform:translateY(-2px);
+    box-shadow:4px 4px 0 var(--cor-secundaria);
+}
+
+.numero-dia{
+    font-weight:700;
+    color:var(--cor-primaria);
+}
+
+.badge-entrega{
+    display:block;
+    margin-top:4px;
+    background:var(--cor-terciaria);
+    color:white;
+    border-radius:12px;
+    padding:2px 8px;
+    font-size:.7rem;
+    text-align:center;
+}
+
+.horario-entrega{
+    display:block;
+    margin-top:4px;
+    font-size:.7rem;
+    color:var(--cor-primaria);
+    font-weight:700;
+}
+
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
     </style>
 </head>
 
 <body>
+<<<<<<< HEAD
 
     {{-- NAVBAR FIXO --}}
     <nav class="navbar-cerise">
@@ -623,6 +816,15 @@ h2::after, h3::after {
 
 
 
+=======
+    @if(empty($semCabecalho))
+    <header>
+        <img src="{{ asset('storage/logo.png') }}" alt="Logo" class="logo">
+        <h1>Sistema da Confeitaria</h1>
+    </header>
+    @endif
+
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
     <main class="content-container">
         <div class="container">
             @if ($errors->any())

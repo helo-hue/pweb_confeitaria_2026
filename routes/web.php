@@ -37,6 +37,7 @@ Route::get('/entregas/calendario/{ano}/{mes}', [EntregaController::class, 'calen
 Route::get('/entregas/{id}/edit', [EntregaController::class, 'edit'])->name('entregas.edit');
 Route::put('/entregas/{id}', [EntregaController::class, 'update'])->name('entregas.update');
 Route::delete('/entregas/{id}', [EntregaController::class, 'destroy'])->name('entregas.destroy');
+<<<<<<< HEAD
 Route::get('/relatorios/clientes', [RelatorioController::class, 'clientesPdf'])->name('relatorios.clientes');
 Route::get('/', function () {
     $pedidos = Pedido::with(['cliente', 'itens.produto'])
@@ -48,3 +49,6 @@ Route::get('/', function () {
 Route::get('/relatorios/entregas-amanha', [RelatorioController::class, 'entregasAmanha'])->name('relatorios.entregas-amanha');
 Route::get('/relatorios/entregas-dia', [RelatorioController::class, 'entregasDia'])->name('relatorios.entregas-dia');
 Route::get('/relatorios/entregas-dia/pdf', [RelatorioController::class, 'entregasDiaPdf'])->name('relatorios.entregas-dia.pdf');
+=======
+Route::get('/relatorios/pdf-clientes', [RelatorioController::class, 'pdfClientes'])->name('relatorios.pdfClientes');
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89

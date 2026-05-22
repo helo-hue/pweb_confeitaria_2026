@@ -6,7 +6,11 @@ use App\Models\Pedido;
 use App\Models\ItemPedido;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Cliente;
+<<<<<<< HEAD
 use Illuminate\Http\Request;
+=======
+
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
 class RelatorioController extends Controller
 {
     public function index()
@@ -38,6 +42,7 @@ class RelatorioController extends Controller
 
         return $pdf->download('relatorio-pedidos.pdf');
     }
+<<<<<<< HEAD
 
 public function clientesPdf()
 {
@@ -102,4 +107,21 @@ public function entregasDiaPdf(Request $request)
 
     return $pdf->download('entregas-' . $data . '.pdf');
 }
+=======
+    public function pdfClientes()
+{
+    $clientesComPedidos = Cliente::with(['pedidos'])
+        ->has('pedidos')
+        ->orderBy('nome')
+        ->get();
+
+    $clientesSemPedidos = Cliente::doesntHave('pedidos')
+        ->orderBy('nome')
+        ->get();
+
+    $pdf = Pdf::loadView('relatorios.pdf_clientes', compact('clientesComPedidos', 'clientesSemPedidos'));
+
+    return $pdf->download('relatorio-clientes.pdf');
+}
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
 }

@@ -56,12 +56,17 @@
 <tr>
     <th>ID</th>
     <th>Cliente</th>
+<<<<<<< HEAD
     <th>produtos</th>
+=======
+    <th>Produtos</th>
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
     <th>Quantidades</th>
     <th>Valor Total</th>
     <th>Data Pedido</th>
     <th>Data Entrega</th>
     <th>Pagamento</th>
+    <th>Observações</th>
     <th>Status</th>
     <th>Ações</th>
 </tr>
@@ -71,15 +76,23 @@
 
 @foreach($pedidos as $index => $pedido)
 
+<<<<<<< HEAD
 <tr class="pedido-linha"
     style="{{ $index >= 10 ? 'display:none;' : '' }}">
+=======
+<tr class="pedido-linha" {{ $index >= 10 ? 'hidden' : '' }}>
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
 
     <td>{{ $pedido->id }}</td>
 
     <!-- CLIENTE -->
     <td>{{ $pedido->cliente->nome ?? 'Cliente não encontrado' }}</td>
 
+<<<<<<< HEAD
     <!-- produtos -->
+=======
+    <!-- PRODUTOS -->
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
     <td>
         @foreach($pedido->itens as $item)
             <div>🍰 {{ $item->produto->nome ?? 'Produto removido' }}</div>
@@ -95,7 +108,11 @@
 
     <!-- VALOR TOTAL -->
     <td>
+<<<<<<< HEAD
         R$ {{ number_format($pedido->valor_total,2,',','.') }}
+=======
+        R$ {{ number_format($pedido->valor_total, 2, ',', '.') }}
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
     </td>
 
     <td>{{ $pedido->data_pedido }}</td>
@@ -104,6 +121,7 @@
 
     <td>{{ ucfirst($pedido->forma_pagamento) }}</td>
 
+<<<<<<< HEAD
     <!-- STATUS -->
     <td>
 
@@ -178,6 +196,83 @@
 
         </form>
 
+=======
+    <!-- OBSERVAÇÕES -->
+    <td>
+        @foreach($pedido->itens as $item)
+            <div>{{ $item->observacoes ?? '-' }}</div>
+        @endforeach
+    </td>
+
+    <!-- STATUS -->
+    <td>
+
+        @php
+            $hoje = date('Y-m-d');
+        @endphp
+
+        @if($pedido->status == 'entregue')
+
+            <span class="status-entregue">
+                Entregue
+            </span>
+
+        @elseif($pedido->data_entrega && $pedido->data_entrega < $hoje)
+
+            <span class="status-atrasado">
+                Atrasado
+            </span>
+
+        @else
+
+            <span class="status-pendente">
+                Pendente
+            </span>
+
+        @endif
+
+    </td>
+
+    <!-- AÇÕES -->
+    <td class="d-flex gap-2">
+
+        <a href="{{ route('pedidos.edit', $pedido->id) }}"
+           class="btn btn-editar btn-sm">
+            Editar
+        </a>
+
+        @if($pedido->status == 'pendente')
+
+            <form action="{{ route('pedidos.entregar', $pedido->id) }}"
+                  method="POST">
+
+                @csrf
+                @method('PUT')
+
+                <button type="submit"
+                        class="btn btn-entregar btn-sm">
+                    Entregar
+                </button>
+
+            </form>
+
+        @endif
+
+        <form action="{{ route('pedidos.destroy', $pedido->id) }}"
+              method="POST"
+              onsubmit="return confirm('Deseja excluir?')">
+
+            @csrf
+            @method('DELETE')
+
+            <button type="submit"
+                    class="btn btn-excluir btn-sm">
+                Excluir
+            </button>
+
+        </form>
+
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
     </td>
 
 </tr>
@@ -197,9 +292,13 @@
     <button class="btn btn-novo"
             id="btnVerMais"
             onclick="verMaisPedidos()">
+<<<<<<< HEAD
 
         Ver Mais
 
+=======
+        Ver Mais
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
     </button>
 
 </div>
@@ -214,11 +313,15 @@
     function verMaisPedidos() {
 
         const linhas = document.querySelectorAll('.pedido-linha');
+<<<<<<< HEAD
 
+=======
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
         let mostrados = 0;
 
         linhas.forEach((linha) => {
 
+<<<<<<< HEAD
             if (linha.style.display === 'none' && mostrados < 10) {
 
                 linha.style.display = '';
@@ -226,14 +329,24 @@
                 mostrados++;
                 pedidosVisiveis++;
 
+=======
+            if (linha.hidden && mostrados < 10) {
+                linha.hidden = false;
+                mostrados++;
+                pedidosVisiveis++;
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
             }
 
         });
 
         if (pedidosVisiveis >= totalPedidos) {
+<<<<<<< HEAD
 
             document.getElementById('btnVerMais').style.display = 'none';
 
+=======
+            document.getElementById('btnVerMais').style.display = 'none';
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
         }
 
     }

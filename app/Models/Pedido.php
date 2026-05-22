@@ -17,6 +17,11 @@ class Pedido extends Model
         'forma_pagamento',
         'status',
         'tem_entrega',
+<<<<<<< HEAD
+=======
+    'hora_entrega',
+    'endereco_entrega',
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
     ];
 
     protected $casts = [
@@ -31,10 +36,19 @@ class Pedido extends Model
     public function itens()
     {
         return $this->hasMany(ItemPedido::class);
+<<<<<<< HEAD
+    }
+
+    public function entrega()
+    {
+        return $this->hasOne(Entrega::class);
+=======
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
     }
 
     public function entrega()
     {
         return $this->hasOne(Entrega::class);
     }
+    
 }

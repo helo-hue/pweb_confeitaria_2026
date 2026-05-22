@@ -29,6 +29,7 @@
     <div class="col-md-6 mb-4">
         <div class="p-4 border rounded text-center" style="background:white;">
             <div style="font-size: 3rem;">👥</div>
+<<<<<<< HEAD
             <h4 class="mt-3" style="color:#8b1a1a;">Clientes</h4>
             <p class="text-muted">Veja clientes ativos com pedidos e inativos sem pedidos.</p>
             <a href="{{ route('relatorios.clientes') }}" class="btn btn-novo mt-2">Exportar PDF</a>
@@ -45,6 +46,14 @@
 </div>iv>
     </div>
 
+=======
+            <h4 class="mt-3" style="color:#8b1a1a;">Relatório de Clientes</h4>
+            <p class="text-muted">Gere e exporte relatórios de clientes em PDF.</p>
+            <a href="{{ route('relatorios.pdfClientes') }}" class="btn btn-novo mt-2">Exportar PDF</a>
+        </div>
+    </div>
+
+>>>>>>> d66ebad25d997cad3da567d84d8e5f113a530a89
 </div>
 
 <div class="mt-2">
