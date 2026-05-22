@@ -2,12 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\Bolo;
+use App\Models\Produto;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class BoloFactory extends Factory
+class ProdutoFactory extends Factory
 {
-    protected $model = Bolo::class;
+    protected $model = Produto::class;
 
     public function definition()
     {

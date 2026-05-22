@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Bolo extends Model
+class Produto extends Model
 {
     use HasFactory;
 
@@ -18,4 +18,8 @@ class Bolo extends Model
         'imagem'
         
     ];
+    public function itens()
+{
+    return $this->hasMany(ItemPedido::class);
+}
 }

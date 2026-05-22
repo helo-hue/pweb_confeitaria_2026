@@ -6,23 +6,17 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::table('bolos', function (Blueprint $table) {
-            //
+        Schema::table('pedidos', function (Blueprint $table) {
+            $table->boolean('tem_entrega')->default(false)->after('status');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::table('bolos', function (Blueprint $table) {
-            //
+        Schema::table('pedidos', function (Blueprint $table) {
+            $table->dropColumn('tem_entrega');
         });
     }
 };

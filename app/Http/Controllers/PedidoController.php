@@ -5,130 +5,183 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Pedido;
 use App\Models\Cliente;
-use App\Models\Bolo;
+use App\Models\Produto;
+use App\Models\ItemPedido;
+use App\Models\Entrega;
 
 class PedidoController extends Controller
 {
-
-    public function index(Request $request)
+    public function index()
     {
-        $buscar = $request->input('buscar');
+        $query = Pedido::with(['cliente', 'itens.produto'])
+            ->orderBy('created_at', 'desc');
 
-        $pedidos = Pedido::with(['cliente', 'bolo'])
-            ->when($buscar, function ($query, $buscar) {
-                $query->whereHas('cliente', function ($q) use ($buscar) {
-                    $q->where('nome', 'like', "%$buscar%");
-                });
-            })
-            ->orderBy('created_at', 'desc')
-            ->get();
+        if (request('buscar')) {
+            $query->whereHas('cliente', function ($q) {
+                $q->where('nome', 'like', '%' . request('buscar') . '%');
+            });
+        }
+
+        $pedidos = $query->get();
 
         return view('pedidos.list', compact('pedidos'));
     }
 
-
     public function create()
     {
         $clientes = Cliente::all();
-        $bolos = Bolo::all();
+        $produtos = Produto::all();
 
-        return view('pedidos.form', compact('clientes', 'bolos'));
+        return view('pedidos.form', compact('clientes', 'produtos'));
     }
-
 
     public function store(Request $request)
     {
         $request->validate([
-            'cliente_id' => 'required|exists:clientes,id',
-            'bolo_id' => 'required|exists:bolos,id',
-            'quantidade' => 'required|numeric|min:0.1',
-            'data_pedido' => 'required|date',
-            'data_entrega' => 'nullable|date',
-            'forma_pagamento' => 'required|string|max:50',
+            'cliente_id'         => 'required|exists:clientes,id',
+            'data_pedido'        => 'required|date',
+            'data_entrega'       => 'nullable|date',
+            'forma_pagamento'    => 'required|string',
+            'itens'              => 'required|array',
+            'itens.*.produto_id'    => 'required|exists:produtos,id',
+            'itens.*.quantidade' => 'required|numeric|min:0.01',
         ]);
 
-        $bolo = Bolo::findOrFail($request->bolo_id);
-
-        $valor_total = $bolo->valor * $request->quantidade;
-
-        Pedido::create([
-            'cliente_id' => $request->cliente_id,
-            'bolo_id' => $request->bolo_id,
-            'quantidade' => $request->quantidade,
-            'valor_total' => $valor_total,
-            'data_pedido' => $request->data_pedido,
-            'data_entrega' => $request->data_entrega,
+        $pedido = Pedido::create([
+            'cliente_id'      => $request->cliente_id,
+            'data_pedido'     => $request->data_pedido,
+            'data_entrega'    => $request->data_entrega,
             'forma_pagamento' => $request->forma_pagamento,
-            'status' => 'pendente',
+            'status'          => 'pendente',
+            'tem_entrega'     => $request->has('tem_entrega'),
+            'valor_total'     => 0
         ]);
 
-        return redirect()
-    ->route('pedidos.index')
-    ->with('sucesso', 'Pedido criado com sucesso!');
+        $total = 0;
+
+        foreach ($request->itens as $item) {
+            $produto     = Produto::findOrFail($item['produto_id']);
+            $subtotal = $produto->valor * $item['quantidade'];
+
+            ItemPedido::create([
+                'pedido_id'      => $pedido->id,
+                'produto_id'        => $item['produto_id'],
+                'quantidade'     => $item['quantidade'],
+                'valor_unitario' => $produto->valor,
+                'observacoes'    => $item['observacoes'] ?? null,
+            ]);
+
+            $total += $subtotal;
+        }
+
+       $pedido->update(['valor_total' => $total]);
+
+    // Cria entrega automaticamente se marcado
+    if ($pedido->tem_entrega) {
+        Entrega::create([
+            'pedido_id' => $pedido->id,
+            'status'    => 'pendente',
+        ]);
+
+        // Adiciona R$15 de taxa de entrega
+        $pedido->update(['valor_total' => $total + 15]);
     }
 
+        return redirect()->route('pedidos.index')
+            ->with('sucesso', 'Pedido criado com sucesso!');
+    }
 
-    public function edit(Pedido $pedido)
+    public function edit($id)
     {
+        $pedido   = Pedido::with('itens')->findOrFail($id);
         $clientes = Cliente::all();
-        $bolos = Bolo::all();
+        $produtos    = Produto::all();
 
-        return view('pedidos.form', compact('pedido', 'clientes', 'bolos'));
+        return view('pedidos.form', compact('pedido', 'clientes', 'produtos'));
     }
 
-
-    public function update(Request $request, Pedido $pedido)
+    public function update(Request $request, $id)
     {
         $request->validate([
-            'cliente_id' => 'required',
-            'bolo_id' => 'required',
-            'quantidade' => 'required|numeric',
-            'data_pedido' => 'required',
-            'forma_pagamento' => 'required',
-            'status' => 'required|string'
+            'cliente_id'         => 'required|exists:clientes,id',
+            'data_pedido'        => 'required|date',
+            'data_entrega'       => 'nullable|date',
+            'forma_pagamento'    => 'required|string',
+            'itens'              => 'required|array',
+            'itens.*.produto_id'    => 'required|exists:produtos,id',
+            'itens.*.quantidade' => 'required|numeric|min:0.01',
         ]);
 
-        $bolo = Bolo::findOrFail($request->bolo_id);
+        $pedido = Pedido::findOrFail($id);
 
-        $valor_total = $bolo->valor * $request->quantidade;
+        $temEntrega = $request->has('tem_entrega');
 
         $pedido->update([
-            'cliente_id' => $request->cliente_id,
-            'bolo_id' => $request->bolo_id,
-            'quantidade' => $request->quantidade,
-            'valor_total' => $valor_total,
-            'data_pedido' => $request->data_pedido,
-            'data_entrega' => $request->data_entrega,
+            'cliente_id'      => $request->cliente_id,
+            'data_pedido'     => $request->data_pedido,
+            'data_entrega'    => $request->data_entrega,
             'forma_pagamento' => $request->forma_pagamento,
-            'status' => $request->status, 
+            'tem_entrega'     => $temEntrega,
         ]);
 
-        return redirect()
-    ->route('pedidos.index')
-    ->with('sucesso', 'Pedido atualizado com sucesso!');
+        $pedido->itens()->delete();
+
+        $total = 0;
+
+        foreach ($request->itens as $item) {
+            $produto     = Produto::findOrFail($item['produto_id']);
+            $subtotal = $produto->valor * $item['quantidade'];
+
+            ItemPedido::create([
+                'pedido_id'      => $pedido->id,
+                'produto_id'        => $item['produto_id'],
+                'quantidade'     => $item['quantidade'],
+                'valor_unitario' => $produto->valor,
+                'observacoes'    => $item['observacoes'] ?? null,
+            ]);
+
+            $total += $subtotal;
+        }
+
+        $pedido->update(['valor_total' => $total]);
+
+        // Se marcou tem_entrega e não existe entrega ainda, cria
+        $pedido->update(['valor_total' => $total]);
+
+// Cria entrega automaticamente se marcado
+    if ($pedido->tem_entrega) {
+        Entrega::create([
+            'pedido_id' => $pedido->id,
+            'status'    => 'pendente',
+        ]);
+
+        // Adiciona R$15 de taxa de entrega
+        $pedido->update(['valor_total' => $total + 15]);
+}
+
+        return redirect()->route('pedidos.index')
+            ->with('sucesso', 'Pedido atualizado com sucesso!');
     }
 
-
-    public function destroy(Pedido $pedido)
+    public function destroy($id)
     {
+        $pedido = Pedido::findOrFail($id);
+        $pedido->itens()->delete();
+        if ($pedido->entrega) {
+            $pedido->entrega->delete();
+        }
         $pedido->delete();
 
-       return redirect()
-    ->route('pedidos.index')
-    ->with('sucesso', 'Pedido excluído com sucesso!');
+        return redirect()->route('pedidos.index')
+            ->with('sucesso', 'Pedido excluído com sucesso!');
     }
-
 
     public function entregar($id)
     {
         $pedido = Pedido::findOrFail($id);
+        $pedido->update(['status' => 'entregue']);
 
-        $pedido->status = 'entregue';
-
-        $pedido->save();
-
-        return redirect()
-    ->route('pedidos.index')
-    ->with('sucesso', 'Pedido entregue com sucesso!');
+        return redirect()->back()
+            ->with('sucesso', 'Pedido marcado como entregue!');
     }
 }

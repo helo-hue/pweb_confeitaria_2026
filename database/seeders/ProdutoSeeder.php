@@ -3,12 +3,12 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Bolo;
+use App\Models\Produto;
 
-class BoloSeeder extends Seeder
+class produtoseeder extends Seeder
 {
     public function run()
     {
-        Bolo::factory()->count(10)->create(); 
+        Produto::factory()->count(10)->create(); 
     }
 }

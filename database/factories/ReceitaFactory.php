@@ -10,11 +10,11 @@ class ReceitaFactory extends Factory
     {
         return [
             'nome' => $this->faker->randomElement([
-                'Bolo de Chocolate',
-                'Bolo de Cenoura',
-                'Bolo Red Velvet',
-                'Bolo de Morango',
-                'Bolo de Baunilha'
+                'Produto de Chocolate',
+                'Produto de Cenoura',
+                'Produto Red Velvet',
+                'Produto de Morango',
+                'Produto de Baunilha'
             ]),
 
             'ingredientes' => $this->faker->sentence(10),

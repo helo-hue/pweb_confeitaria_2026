@@ -11,23 +11,30 @@ class Pedido extends Model
 
     protected $fillable = [
         'cliente_id',
-        'bolo_id',
-        'quantidade',
         'valor_total',
         'data_pedido',
         'data_entrega',
         'forma_pagamento',
         'status',
+        'tem_entrega',
     ];
 
-    // Relacionamentos
+    protected $casts = [
+        'tem_entrega' => 'boolean',
+    ];
+
     public function cliente()
     {
         return $this->belongsTo(Cliente::class);
     }
 
-    public function bolo()
+    public function itens()
     {
-        return $this->belongsTo(Bolo::class);
+        return $this->hasMany(ItemPedido::class);
+    }
+
+    public function entrega()
+    {
+        return $this->hasOne(Entrega::class);
     }
 }

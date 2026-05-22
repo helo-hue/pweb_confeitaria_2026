@@ -1,37 +1,46 @@
 @extends('main')
+
 @section('titulo', 'Lista de Pedidos')
+
 @section('conteudo')
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Lista de Pedidos</h2>
-    <a href="{{ route('pedidos.create') }}" class="btn btn-novo">
-        Novo Pedido
-    </a>
-</div>
 
+    <h2>Lista de Pedidos</h2>
+
+    <div class="d-flex gap-2">
+
+        <a href="{{ url('/') }}" class="btn btn-voltar">
+            Voltar à Página Inicial
+        </a>
+
+        <a href="{{ route('pedidos.create') }}" class="btn btn-novo">
+            Novo Pedido
+        </a>
+
+    </div>
+
+</div>
 
 @if(session('sucesso'))
-<div class="alert alert-success">
-    {{ session('sucesso') }}
-</div>
+    <div class="alert alert-success">
+        {{ session('sucesso') }}
+    </div>
 @endif
-
 
 @if(session('erro'))
-<div class="alert alert-danger">
-    {{ session('erro') }}
-</div>
+    <div class="alert alert-danger">
+        {{ session('erro') }}
+    </div>
 @endif
-
-
 
 <form action="{{ route('pedidos.index') }}" method="GET" class="mb-4 d-flex gap-2">
 
     <input type="text"
-        name="buscar"
-        class="form-control"
-        placeholder="Buscar por cliente"
-        value="{{ request('buscar') }}">
+           name="buscar"
+           class="form-control"
+           placeholder="Buscar por cliente"
+           value="{{ request('buscar') }}">
 
     <button type="submit" class="btn btn-pesquisar">
         Pesquisar
@@ -39,18 +48,16 @@
 
 </form>
 
-
 <div class="table-responsive">
 
 <table class="table table-custom align-middle">
 
 <thead>
-
 <tr>
     <th>ID</th>
     <th>Cliente</th>
-    <th>Bolo</th>
-    <th>Quantidade</th>
+    <th>produtos</th>
+    <th>Quantidades</th>
     <th>Valor Total</th>
     <th>Data Pedido</th>
     <th>Data Entrega</th>
@@ -58,118 +65,120 @@
     <th>Status</th>
     <th>Ações</th>
 </tr>
-
 </thead>
-
 
 <tbody>
 
-@foreach($pedidos as $pedido)
+@foreach($pedidos as $index => $pedido)
 
-<tr>
+<tr class="pedido-linha"
+    style="{{ $index >= 10 ? 'display:none;' : '' }}">
 
-<td>{{ $pedido->id }}</td>
+    <td>{{ $pedido->id }}</td>
 
-<td>{{ $pedido->cliente->nome }}</td>
+    <!-- CLIENTE -->
+    <td>{{ $pedido->cliente->nome ?? 'Cliente não encontrado' }}</td>
 
-<td>{{ $pedido->bolo->nome }}</td>
+    <!-- produtos -->
+    <td>
+        @foreach($pedido->itens as $item)
+            <div>🍰 {{ $item->produto->nome ?? 'Produto removido' }}</div>
+        @endforeach
+    </td>
 
-<td>{{ $pedido->quantidade }}</td>
+    <!-- QUANTIDADE -->
+    <td>
+        @foreach($pedido->itens as $item)
+            <div>{{ $item->quantidade }} kg</div>
+        @endforeach
+    </td>
 
-<td>
-R$ {{ number_format($pedido->valor_total,2,',','.') }}
-</td>
+    <!-- VALOR TOTAL -->
+    <td>
+        R$ {{ number_format($pedido->valor_total,2,',','.') }}
+    </td>
 
-<td>{{ $pedido->data_pedido }}</td>
+    <td>{{ $pedido->data_pedido }}</td>
 
-<td>{{ $pedido->data_entrega ?? '-' }}</td>
+    <td>{{ $pedido->data_entrega ?? '-' }}</td>
 
-<td>{{ ucfirst($pedido->forma_pagamento) }}</td>
+    <td>{{ ucfirst($pedido->forma_pagamento) }}</td>
 
+    <!-- STATUS -->
+    <td>
 
-<!-- STATUS -->
-<td>
+        @php
+            $hoje = date('Y-m-d');
+        @endphp
 
-@php
-$hoje = date('Y-m-d');
-@endphp
+        @if($pedido->status == 'entregue')
 
+            <span class="status-entregue">
+                Entregue
+            </span>
 
-@if($pedido->status == 'entregue')
+        @elseif($pedido->data_entrega && $pedido->data_entrega < $hoje)
 
-<span class="status-entregue">
-Entregue
-</span>
+            <span class="status-atrasado">
+                Atrasado
+            </span>
 
+        @else
 
-@elseif($pedido->data_entrega && $pedido->data_entrega < $hoje)
+            <span class="status-pendente">
+                Pendente
+            </span>
 
-<span class="status-atrasado">
-Atrasado
-</span>
+        @endif
 
+    </td>
 
-@else
+    <!-- AÇÕES -->
+    <td class="d-flex gap-2">
 
-<span class="status-pendente">
-Pendente
-</span>
+        <a href="{{ route('pedidos.edit', $pedido->id) }}"
+           class="btn btn-editar btn-sm">
 
-@endif
+            Editar
 
-</td>
+        </a>
 
+        @if($pedido->status == 'pendente')
 
-<td class="d-flex gap-2">
+            <form action="{{ route('pedidos.entregar', $pedido->id) }}"
+                  method="POST">
 
+                @csrf
+                @method('PUT')
 
-<a href="{{ route('pedidos.edit', $pedido->id) }}"
-class="btn btn-editar btn-sm">
+                <button type="submit"
+                        class="btn btn-entregar btn-sm">
 
-Editar
+                    Entregar
 
-</a>
+                </button>
 
+            </form>
 
-@if($pedido->status == 'pendente')
+        @endif
 
-<form action="{{ route('pedidos.entregar', $pedido->id) }}"
-method="POST">
+        <form action="{{ route('pedidos.destroy', $pedido->id) }}"
+              method="POST"
+              onsubmit="return confirm('Deseja excluir?')">
 
-@csrf
-@method('PUT')
+            @csrf
+            @method('DELETE')
 
-<button type="submit"
-class="btn btn-entregar btn-sm">
+            <button type="submit"
+                    class="btn btn-excluir btn-sm">
 
-Entregar
+                Excluir
 
-</button>
+            </button>
 
-</form>
+        </form>
 
-@endif
-
-
-
-<form action="{{ route('pedidos.destroy', $pedido->id) }}"
-method="POST"
-onsubmit="return confirm('Deseja excluir?')">
-
-@csrf
-@method('DELETE')
-
-<button type="submit"
-class="btn btn-excluir btn-sm">
-
-Excluir
-
-</button>
-
-</form>
-
-
-</td>
+    </td>
 
 </tr>
 
@@ -181,18 +190,54 @@ Excluir
 
 </div>
 
+@if($pedidos->count() > 10)
 
+<div class="text-center mt-3">
 
-<div class="mt-4">
+    <button class="btn btn-novo"
+            id="btnVerMais"
+            onclick="verMaisPedidos()">
 
-<a href="{{ url('/') }}"
-class="btn btn-voltar">
+        Ver Mais
 
-Voltar à Página Inicial
-
-</a>
+    </button>
 
 </div>
 
+@endif
+
+<script>
+
+    const totalPedidos = {{ $pedidos->count() }};
+    let pedidosVisiveis = 10;
+
+    function verMaisPedidos() {
+
+        const linhas = document.querySelectorAll('.pedido-linha');
+
+        let mostrados = 0;
+
+        linhas.forEach((linha) => {
+
+            if (linha.style.display === 'none' && mostrados < 10) {
+
+                linha.style.display = '';
+
+                mostrados++;
+                pedidosVisiveis++;
+
+            }
+
+        });
+
+        if (pedidosVisiveis >= totalPedidos) {
+
+            document.getElementById('btnVerMais').style.display = 'none';
+
+        }
+
+    }
+
+</script>
 
 @endsection

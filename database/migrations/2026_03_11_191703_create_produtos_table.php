@@ -9,7 +9,7 @@ return new class extends Migration
     
 public function up()
 {
-    Schema::create('bolos', function (Blueprint $table) {
+    Schema::create('produtos', function (Blueprint $table) {
         $table->id();
         $table->string('nome');
         $table->string('sabor_massa');
@@ -23,6 +23,6 @@ public function up()
 
 public function down()
 {
-    Schema::dropIfExists('bolos');
+    Schema::dropIfExists('produtos');
 }
 };
